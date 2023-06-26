@@ -78,6 +78,10 @@ const updateEventById = async (req, res) => {
 
 // Delete an event by ID
 const deleteEventById = async (req, res) => {
+  
+   // TODO 
+   // DELETE THE TICKETS ASSOCIATED WITH THE EVENT
+
   try {
     const { id } = req.params;
     const deletedEvent = await Event.findByIdAndDelete(id);
