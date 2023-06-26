@@ -13,12 +13,6 @@ const eventSchema = new mongoose.Schema({
   ],
 });
 
-eventSchema.virtual('soldTickets').get(function () {
-  const soldTickets = this.tickets.reduce((acc, ticket) => {
-    return acc + ticket.quantity;
-  }, 0);
-  return soldTickets;
-});
 
 const Event = mongoose.model('Event', eventSchema);
 export default Event;
