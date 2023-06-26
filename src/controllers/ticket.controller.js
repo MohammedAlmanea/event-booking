@@ -73,15 +73,29 @@ const updateTicketById = async (req, res) => {
 const deleteTicketById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Find the ticket to be deleted
     const deletedTicket = await Ticket.findByIdAndDelete(id);
     if (!deletedTicket) {
       return res.status(404).json({ error: 'Ticket not found' });
     }
+
+    // Find the event associated with the deleted ticket
+    const event = await Event.findOne({ tickets: id });
+    if (!event) {
+      return res.json({ message: 'Ticket deleted successfully' });
+    }
+
+    // Remove the ticket's ID from the event's ticket array
+    event.tickets.pull(id);
+    await event.save();
+
     res.json({ message: 'Ticket deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete ticket' });
   }
 };
+
 
 // Get tickets by user
 const getTicketsByUser = async (req, res) => {
