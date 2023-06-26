@@ -1,20 +1,31 @@
 // Import the necessary dependencies
-import  Ticket  from '../models/Ticket.model.js';
-
+import Ticket from '../models/Ticket.model.js';
+import Event from '../models/Event.model.js';
 // Create a new ticket
 const createTicket = async (req, res) => {
   try {
-    // TODO :
-    // UPDATE THE EVENT'S TICKET ARRAY
     const { event, user, quantity } = req.body;
+
+    // Create the ticket
     const ticket = await Ticket.create({
       event,
       user,
       quantity,
     });
-    res.status(201).json(ticket);
+
+    // Update the event's ticket array
+    const updatedEvent = await Event.findByIdAndUpdate(
+      event,
+      { $push: { tickets: ticket } },
+      { new: true }
+    );
+
+    console.log(updatedEvent.soldTickets);
+
+    res.status(201).json({ ticket, updatedEvent });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create ticket' });
+    console.log(error);
+    res.status(500).json({ message: 'Failed to create ticket', error });
   }
 };
 
@@ -45,8 +56,6 @@ const getTicketById = async (req, res) => {
 // Update a ticket by ID
 const updateTicketById = async (req, res) => {
   try {
-    // TODO :
-    // UPDATE THE EVENT'S TICKET ARRAY
     const { id } = req.params;
     const updatedTicket = await Ticket.findByIdAndUpdate(id, req.body, {
       new: true,
